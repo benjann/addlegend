@@ -19,7 +19,7 @@ To install `addlegend` from GitHub, type
 
 Examples
 
-**Composite symbols**
+**Composite symbols.**
 The following example illustrates how to create a composite symbol.
 
     sysuse auto
@@ -36,7 +36,7 @@ at X = 45). By default, the legend is placed in the top-left corner.
 
 ![example 1](/images/1.png)
 
-**Custom positioning of legend keys**
+**Custom positioning of legend keys.**
 The following example illustrates how the legend keys can be placed in different
 locations on the plot.
 
@@ -52,7 +52,7 @@ placement of the key's text.
 
 ![example 2](/images/2.png)
 
-**Headings**
+**Headings.**
 The following example illustrates how headings aligned with the keys' symbols
 or aligned with the keys' texts can be added.
 
@@ -66,7 +66,7 @@ or aligned with the keys' texts can be added.
 
 ![example 3](/images/3.png)
 
-**Placing the legend outside of the plot region**
+**Placing the legend outside of the plot region.**
 If you want to place the legend outside of the plot region, use the `margin()`
 option to make sure that there is enough space for the legend in the graph's
 margin.
@@ -81,7 +81,7 @@ margin.
 
 ![example 4](/images/4.png)
 
-**Add legend to subgraph** 
+**Add legend to subgraph.** 
 In case of a graph that contains multiple subgraphs, specify `addlegend _#_`
 to select the subgraph to which the legend should be added:
 

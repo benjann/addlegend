@@ -1,0 +1,10 @@
+v 3
+d addlegend: utility to add a custom legend to a twoway graph
+d 
+d Author: Ben Jann, University of Bern, ben.jann@unibe.ch
+d
+d Distribution-Date: 20260614
+f _mklegend.ado
+f _mklegend.sthlp
+f addlegend.ado
+f addlegend.sthlp

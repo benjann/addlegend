@@ -1,5 +1,5 @@
 {smcl}
-{* 14jun2026}{...}
+{* 15jun2026}{...}
 {hi:help addlegend}{...}
 {right:{browse "https://github.com/benjann/addlegend/"}}
 {hline}
@@ -106,7 +106,7 @@
     {p_end}
 {synopt :{opt tx(#)} or {opt TX(#)}}horizontal position of text, relative to symbol, in percent or units
     {p_end}
-{synopt :{opt tw(#)} or {opt TW(#)}}with of text, in percent or units; relevant for {cmd:frame()}
+{synopt :{opt tw(#)} or {opt TW(#)}}with of text, in percent or units; only relevant for {cmd:frame()}
     {p_end}
 {synopt :{opth t:ext(textbox_options)}}options affecting look of text
     {p_end}
@@ -117,7 +117,7 @@
 
 {pstd}
     {cmd:addlegend} creates a custom legend and adds it to an existing
-    {helpb twoway} graph, removing the legend created by Stata's
+    {helpb twoway} graph, thereby removing the legend created by Stata's
     {helpb legend_option:legend()} option. In contrast to the
     {helpb legend_option:legend()} option, {cmd:addlegend} can combine multiple
     symbols in a single legend key and the keys can be freely positioned on the
@@ -129,12 +129,12 @@
 {pstd}
     Argument {it:graphname} selects the memory graph to be affected. The default
     is to use the current (topmost) graph. Argument {it:{help numlist}}
-    selects subgraphs to be affected if the graph has been created using
+    selects the subgraph(s) to be affected if the graph has been created using
     {helpb graph combine} or the {help by_option:{bf:by()}} option. The default
     is to modify all {helpb twoway} subgraphs found in the graph.
 
 {pstd}
-    {cmd:addlegend} uses to dimensions of the axes of the selected graph (or
+    {cmd:addlegend} uses the dimensions of the axes of the selected graph (or
     the first selected subgraph) to determine the position and size of the
     legend. Use options
     {helpb addlegend##symopts:y()},
@@ -148,13 +148,13 @@
     to override the default behavior. These options come in two flavors,
     lower case and upper case. Use the lower-case variant, e.g. {cmd:y()},
     to specify a setting in percent of the range of the relevant axis; use the
-    upper-case variant, e.g. {cmd:Y()}, to specify a setting in units
+    upper-case variant, e.g. {cmd:Y()}, to specify a setting in original units
     of the axis. If both are specified, the upper-case variant takes precedence
     over the lower-case variant.
 
 {pstd}
     Options can be specified at different levels, at the global level, at the
-    level of a legend key, or at the level of a key's symbol. Upper-levels
+    level of a legend key, or at the level of a key's symbol. Upper-level
     settings are used as defaults for lower-level settings, and options
     specified a lower level take precedence over options specified at an upper
     level (ignoring case; for example, {cmd:y()} specified at a lower level
@@ -168,7 +168,7 @@
     {helpb addlegend##txtopts:tx()}, and
     {helpb addlegend##txtopts:tw()}
     are sticky in the sense that they change the default settings for
-    subsequent keys. This is not true, however, for options specified at the
+    subsequent keys. This is not true for options specified at the
     level of a key's symbol, which are non-sticky and only affect the current
     symbol. Finally, if both {helpb addlegend##symopts:y()} and
     {helpb addlegend##symopts:Y()} are omitted at the level of a legend key,
@@ -180,9 +180,9 @@
 {pstd}
     Command {cmd:_mklegend} is the engine behind {cmd:addlegend}. It analyses
     the selected graph, creates the code of the custom legend (a set of
-    {helpb twoway scatteri} commands), and stores it in macro {cmd:r(legend)}.
-    {cmd:addlegend} then applies {helpb addplot} to add the contents of
-    {cmd:r(legend)} to the selected graph.
+    {helpb twoway scatteri} commands), and stores it in macro
+    {cmd:r(legend)}. {cmd:addlegend} then applies {helpb addplot} to add the
+    contents of {cmd:r(legend)} to the selected graph.
 
 {marker options}{...}
 {title:Options}
@@ -194,14 +194,14 @@
     {opt lskip(#)} sets the baseline skip between legend keys as a factor of
     the symbol height; the default is {cmd:lskip(1.5)}. Option {cmd:lskip()} has no
     effect on legend keys that are positioned explicitly by the
-    {helpb addlegend##y:y()} option.
+    {helpb addlegend##symopts:y()} option.
 
 {marker frame}{...}
 {phang}
     {cmd:frame}[{cmd:(}{it:subopts}{cmd:)}] draws a frame around the legend. The
     size and position of the frame will be determined automatically, but you will
     most likely have to adjust its width using suboption {cmd:w()} (or by setting
-    the text width using option {helpb addlegend##tw:tw()}). Furthermore, you
+    the text width using option {helpb addlegend##txtopts:tw()}). Furthermore, you
     may want to adjust the padding (inner margin of the frame) using suboptions {cmd:ym()} and
     {cmd:xm()}. {it:subopts} are as follows.
 
@@ -221,7 +221,7 @@
     {opt y(#)} and {opt Y(#)} set the position of the top edge of the frame, in percent
     of the range of the Y-axis or in units of the Y-axis, respectively. {cmd:Y()}
     takes precedence over {cmd:y()}. Together, {cmd:y()} and {cmd:x()} determine the
-    position of the upper-left corner corner of the frame.
+    position of the upper-left corner of the frame.
 
 {phang2}
     {opt x(#)} and {opt X(#)} set the position of the left edge of the frame,
@@ -277,7 +277,7 @@
 
 {phang}
     {opt x(#)} and {opt X(#)} set the horizontal position of the legend key
-    (i.e., the left edge of the space allocated for the key's symbol; or the
+    (i.e., the left edge of the space allocated for the key's symbol, or the
     right edge if the key's width is negative), in percent of the range of the
     X-axis or in units of the X-axis, respectively. The default is
     {cmd:x(2)}. {cmd:X()} takes precedence over {cmd:y()}.
@@ -295,17 +295,17 @@
     over {cmd:w()}.
 
 {phang}
-    {it:marker_options} are options affecting look of the markers included
+    {it:marker_options} are options affecting the look of the markers included
     in the legend key's symbol; see help {it:{help marker_options}}. If omitted,
     option {cmd:pstyle()} will be set automatically based on the order of the
     key.
 
 {phang}
-    {it:line_options} are options affecting look of the lines included
+    {it:line_options} are options affecting the look of the lines included
     in the legend key's symbol; see help {it:{help line_options}}.
 
 {phang}
-    {it:area_options} are options affecting look of the areas included
+    {it:area_options} are options affecting the look of the areas included
     in the legend key's symbol; see help {it:{help area_options}}.
 
 {marker txtopts}{...}
@@ -324,7 +324,6 @@
     to the width of the key's symbol plus 1 percent of the width of the
     X-axis. {cmd:TX()} takes precedence over {cmd:tx()}.
 
-{marker tw}{...}
 {phang}
     {opt tw(#)} and {opt TW(#)} set the with of the text, in percent of the
     range of the Y-axis or in units of the Y-axis, respectively. The default is
@@ -422,7 +421,8 @@
 
 {pstd}
     In case of a graph that contains multiple subgraphs, specify {cmd:addlegend} {it:#}
-    to select the subgraph to which the legend should be added:
+    to add the legend to subgraph {it:#} (by default, the legend is added to all
+    subgraphs).
 
         . {stata sysuse auto}
 {p 8 12 2}
@@ -438,11 +438,15 @@
     . {stata `"addlegend 2, x(60) tw(35) frame: () "Mileage per gallon" || () "Trunk space""'}
     {p_end}
 
+{pstd}
+    Note that specifying a key's symbol as {cmd:()} selects the plot's default
+    marker symbol.
+
 {dlgtab:Use of _mklegend}
 
 {pstd}
     {cmd:addlegend} is implemented as a wrapper for {cmd:_mklegend} followed by
-    {helpb addplot}. In some cases you might to want apply {cmd:_mklegend}
+    {helpb addplot}. In some cases you might want to apply {cmd:_mklegend}
     manually instad of using {cmd:addlegend}. Note that {cmd:_mklegend} stores
     the legend's code in macro {cmd:r(legend)}.
 
@@ -486,7 +490,7 @@
     . {stata lpoly weight length, degree(1) ci nodraw}
     {p_end}
 {p 8 12 2}
-    . {stata `"_mklegend, tw(25) frame: () "data" || (area, astyle(ci)) (line, pstyle(p2)) "lopoly fit and 95% CI""'}
+    . {stata `"_mklegend, tw(25) frame: () "data" || (area, astyle(ci)) (line) "lopoly fit and 95% CI""'}
     {p_end}
 {p 8 12 2}
     . {stata lpoly weight length, degree(1) ci legend(off) addplot(`r(legend)')}

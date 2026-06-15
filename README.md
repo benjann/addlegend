@@ -27,14 +27,28 @@ The following example illustrates how to create a composite symbol.
            (sc mpg turn, msize(large) ms(X) pstyle(p1)) ///
            (lfit mpg turn, pstyle(p2))
     addlegend, X(45) frame: ///
-           (Oh X, msize(large)) "Mileage (mpg)" ///
-        || (line)               "Fitted values"
+           (Oh X) "Mileage (mpg)", msize(large) ///
+        || (line) "Fitted values"
 
 Option `X(45)` has been used to shift the legend to the right of the
 graph (the left edge of the space allocated for the keys' symbols is positioned
 at X = 45). By default, the legend is placed in the top-left corner.
 
 ![example 1](/images/1.png)
+
+Use parentheses if you want to apply separate options to the individual components
+of a composite symbol.
+
+    sysuse auto
+    lpoly weight length, degree(1) ci
+    addlegend: ///
+           () "data" ///
+        || (area, astyle(ci)) (line) "lpoly smooth and 95% CI"
+
+Note that specifying a key's symbol as `()` selects the plot's default
+marker symbol.
+
+![example 2](/images/2.png)
 
 **Custom positioning of legend keys.**
 The following example illustrates how the legend keys can be placed in different
@@ -45,12 +59,12 @@ locations on the plot.
            (histogram weight if foreign==1, psty(p2bar) color(%50))
     addlegend, lskip(0) color(%50): ///
            (bar) "Domestic", X(4840) W(-300) ///
-        || (bar) "Foreign", X(1760) W(300)
+        || (bar) "Foreign",  X(1760) W(300)
 
 Note how setting the symbol width to a negative value changes the default
 placement of the key's text.
 
-![example 2](/images/2.png)
+![example 3](/images/3.png)
 
 **Headings.**
 The following example illustrates how headings aligned with the keys' symbols
@@ -64,7 +78,7 @@ or aligned with the keys' texts can be added.
         || - "Heading aligned with text" ///
         || (line) () "male"
 
-![example 3](/images/3.png)
+![example 4](/images/4.png)
 
 **Placing the legend outside of the plot region.**
 If you want to place the legend outside of the plot region, use the `margin()`
@@ -76,14 +90,15 @@ margin.
            (sc mpg turn, msize(large) ms(X) pstyle(p1)) ///
            (lfit mpg turn, pstyle(p2))
     addlegend, x(105) margin(r=40): ///
-           (Oh X, msize(large)) "Mileage (mpg)" ///
+           (Oh X) "Mileage (mpg)", msize(large) ///
         || (line) "Fitted values"
 
-![example 4](/images/4.png)
+![example 5](/images/5.png)
 
 **Add legend to subgraph.** 
-In case of a graph that contains multiple subgraphs, specify `addlegend _#_`
-to select the subgraph to which the legend should be added:
+In case of a graph that contains multiple subgraphs, specify `addlegend #` to
+add the legend to subgraph `#` (by default, the legend is added to all
+subgraphs).
 
     sysuse auto
     scatter mpg trunk weight, legend(off) name(weight, replace) nodraw
@@ -93,7 +108,7 @@ to select the subgraph to which the legend should be added:
            () "Mileage per gallon" ///
         || () "Trunk space"
 
-![example 5](/images/5.png)
+![example 6](/images/6.png)
 
 ---
 

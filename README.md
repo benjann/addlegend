@@ -1,7 +1,7 @@
 # addlegend
 Stata utility to add a custom legend to a twoway graph
 
-`addlegend` is a utility to create a custom legend and add it to a twoway
+`addlegend` is a utility to create a custom legend and add it to a `twoway`
 graph. In contrast to Stata's `legend()` option, `addlegend` can combine
 multiple symbols in a single legend key, and the keys can be freely positioned
 on the plot.
@@ -36,8 +36,8 @@ at X = 45). By default, the legend is placed in the top-left corner.
 
 ![example 1](/images/1.png)
 
-Use parentheses if you want to apply separate options to the individual components
-of a composite symbol.
+Use repeated parentheses if you want to apply separate options to the
+individual components of a composite symbol.
 
     sysuse auto
     lpoly weight length, degree(1) ci

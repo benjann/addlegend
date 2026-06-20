@@ -1,19 +1,24 @@
 # addlegend
-Stata utility to add a custom legend to a twoway graph
+Stata module to add a custom legend to a twoway graph
 
 `addlegend` is a utility to create a custom legend and add it to a `twoway`
 graph. In contrast to Stata's `legend()` option, `addlegend` can combine
 multiple symbols in a single legend key, and the keys can be freely positioned
 on the plot.
 
-To install `addlegend` from GitHub, type
+`addlegend` requires Stata version 14 (or newer) and
+[`addplot`](https://doi.org/10.1177/1536867X1501500308). To install
+`addlegend` and `addplot` from the SSC Archive, type
+
+    . ssc install addlegend, replace
+    . ssc install addplot, replace
+
+---
+
+Installation from GitHub:
 
     . net install addlegend, replace from(https://raw.githubusercontent.com/benjann/addlegend/main/)
-
-`addlegend` requires [`addplot`](https://doi.org/10.1177/1536867X1501500308). To install
-`addplot`, type
-
-    . ssc install addplot, replace
+    . net install addplot, replace from(https://raw.githubusercontent.com/benjann/addplot/main/)
 
 ---
 
@@ -31,7 +36,7 @@ The following example illustrates how to create a composite symbol.
         || (line) "Fitted values"
 
 Option `X(45)` has been used to shift the legend to the right of the
-graph (the left edge of the space allocated for the keys' symbols is positioned
+graph (i.e., to position the left edge of the space allocated for the keys' symbols
 at X = 45). By default, the legend is placed in the top-left corner.
 
 ![example 1](/images/1.png)
@@ -113,6 +118,12 @@ subgraphs).
 ---
 
 Main changes:
+
+    20jun2026 (version 2.0.1)
+    - if applied to a by() graph, addlegend did not remove the global legend; this
+      is fixed
+    - now returning r(graphname), r(subgraphs), r(graphfamily)
+    - caller version is now passed trough to addplot
 
     14jun2026 (version 2.0.0)
     - package relaunched as addlegend; command mklegend renamed to _mklegend

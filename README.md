@@ -55,6 +55,17 @@ marker symbol.
 
 ![example 2](/images/2.png)
 
+You can also include arbitrary text in a key's symbol:
+
+    sysuse auto
+    generate str ball = cond(foreign, "`=uchar(9917)'", "`=uchar(9918)'")
+    scatter price weight, msymbol(i) mlabposition(0) mlabel(ball)
+    addlegend: ///
+           ("`=uchar(9918)'") "domestic" ///
+        || ("`=uchar(9917)'") "foreign"
+
+![example 7](/images/7.png)
+
 **Custom positioning of legend keys.**
 The following example illustrates how the legend keys can be placed in different
 locations on the plot.
@@ -118,6 +129,9 @@ subgraphs).
 ---
 
 Main changes:
+
+    20jun2026 (version 2.0.2)
+    - a key's symbol can now include text
 
     20jun2026 (version 2.0.1)
     - if applied to a by() graph, addlegend did not remove the global legend; this

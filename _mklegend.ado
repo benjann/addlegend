@@ -1,4 +1,4 @@
-*! version 2.0.1  20jun2026  Ben Jann
+*! version 2.0.2  22jun2026  Ben Jann
 
 program _mklegend, rclass
     version 14
@@ -336,10 +336,10 @@ program parse_sym
         gettoken `arg' 0 : 0
     }
     _parse comma SYM 0 : 0
-    if !`: list sizeof SYM' local SYM `""""'
     syntax [, y(numlist max=1) x(numlist max=1)/*
         */ h(numlist max=1) w(numlist max=1)/*
-        */ PSTYle(passthru) * ]
+        */ PSTYle(passthru) MLABPosition(passthru) * ]
+    local options `mlabposition' `options'
     if "`y'"!="" local _Y  = `Ymin' + `y' * `Yr' / 100
     if "`x'"!="" local _X  = `Xmin' + `x' * `Xr' / 100
     if "`h'"!="" local _H  =          `h' * `Yr' / 100
@@ -353,42 +353,52 @@ program parse_sym
         local `opt' `"`_`opt''"'
     }
     local options `_options' `options'
+    
+    if !`: list sizeof SYM' local SYM "."
     local plots
-    foreach sym of local SYM {
-        if      `"`sym'"'=="rcap"    local sym "cap"
-        else if `"`sym'"'=="rcapsym" local sym "capsym"
-        else if `"`sym'"'=="spike"   local sym "line"
+    while (`"`SYM'"'!="") {
         local b = `Y' - 0.5 * `H'
         local t = `Y' + 0.5 * `H'
         local l = `X'
         local r = `X' + `W'
+        local c = (`l' + `r') / 2
         local minY = min(`minY', `t', `b')
         local maxY = max(`maxY', `t', `b')
         local minX = min(`minX', `l', `r')
         local maxX = max(`maxX', `l', `r')
         local ptype ""
-        if inlist(`"`sym'"',"line","cap","capsym") {
-            if `"`sym'"'=="line"     local plot recast(line)
-            else if `"`sym'"'=="cap" local plot recast(connect) ms(|)
-            else                     local plot recast(connect)
-            local plot scatteri `Y' `l' `Y' `r', `plot'
-        }
-        else if inlist(`"`sym'"',"area","bar","rline") {
-            if `"`sym'"'=="rline" {
-                local plot scatteri `t' `l' `t' `r' . . `b' `l' `b' `r',/*
-                    */ recast(line) cmissing(n)
-            }
-            else {
-                local ptype "`sym'"
-                local plot scatteri `b' `l' `b' `r' `t' `r' `t' `l',/*
-                    */ recast(area) nodropbase
-            }
+        gettoken sym SYM : SYM, qed(istext)
+        if `istext' {
+            if `"`mlabposition'"'=="" local plot (0)
+            else                      local plot
+            local plot scatteri `Y' `c' `plot' `"`sym'"', ms(i)
         }
         else {
-            local c = `X' + 0.5 * `W'
-            local plot ms(`sym')
-            if `"`sym'"'=="" local plot
-            local plot scatteri `Y' `c', `plot'
+            if      `"`sym'"'=="rcap"    local sym "cap"
+            else if `"`sym'"'=="rcapsym" local sym "capsym"
+            else if `"`sym'"'=="spike"   local sym "line"
+            if inlist(`"`sym'"',"line","cap","capsym") {
+                if `"`sym'"'=="line"     local plot recast(line)
+                else if `"`sym'"'=="cap" local plot recast(connect) ms(|)
+                else                     local plot recast(connect)
+                local plot scatteri `Y' `l' `Y' `r', `plot'
+            }
+            else if inlist(`"`sym'"',"area","bar","rline") {
+                if `"`sym'"'=="rline" {
+                    local plot scatteri `t' `l' `t' `r' . . `b' `l' `b' `r',/*
+                        */ recast(line) cmissing(n)
+                }
+                else {
+                    local ptype "`sym'"
+                    local plot scatteri `b' `l' `b' `r' `t' `r' `t' `l',/*
+                        */ recast(area) nodropbase
+                }
+            }
+            else {
+                local plot ms(`sym')
+                if `"`sym'"'=="." local plot
+                local plot scatteri `Y' `c', `plot'
+            }
         }
         if `"`pstyle'"'=="" local PSTYLE pstyle(p`p'`ptype')
         else                local PSTYLE `pstyle'

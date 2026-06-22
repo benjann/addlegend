@@ -1,5 +1,5 @@
 {smcl}
-{* 20jun2026}{...}
+{* 22jun2026}{...}
 {hi:help addlegend}{...}
 {right:{browse "https://github.com/benjann/addlegend/"}}
 {hline}
@@ -53,9 +53,11 @@
     and {it:symbol} is
 
 {p2colset 9 22 22 2}{...}
-{p2col : {it:{help symbolstyle}}}marker
+{p2col : {it:{help symbolstyle}}}marker; may type {cmd:.} (missing) for default marker
     {p_end}
-{p2col : {opt line}}line
+{p2col : {cmd:"}{help graph_text:{it:text}}{cmd:"}}any text
+    {p_end}
+{p2col : {opt line}}line; may also type {cmd:spike}
     {p_end}
 {p2col : {opt rline}}double line
     {p_end}
@@ -63,9 +65,9 @@
     {p_end}
 {p2col : {opt bar}}bar
     {p_end}
-{p2col : {opt cap}}capped line; can also type {cmd:rcap}
+{p2col : {opt cap}}capped line; may also type {cmd:rcap}
     {p_end}
-{p2col : {opt capsym}}line capped with symbols; can also type {cmd:rcapsym}
+{p2col : {opt capsym}}line capped with symbols; may also type {cmd:rcapsym}
     {p_end}
 
 
@@ -95,9 +97,11 @@
     {p_end}
 {synopt :{it:{help marker_options}}}options affecting look of markers
     {p_end}
+{synopt :{it:{help marker_label_options}}}options affecting look of text symbols
+    {p_end}
 {synopt :{it:{help line_options}}}options affecting look of lines
     {p_end}
-{synopt :{it:{help area_options}}}options affecting look of areas
+{synopt :{it:{help area_options}}}options affecting look of areas or bars
     {p_end}
 
 {marker topts}{...}
@@ -310,11 +314,16 @@
     keys.
 
 {phang}
+    {it:marker_label_options} are options affecting the look of text included
+    in the legend key's symbol; see help {it:{help marker_label_options}}. If omitted,
+    option {cmd:mlabposition()} will be set to {cmd:0}.
+
+{phang}
     {it:line_options} are options affecting the look of the lines included
     in the legend key's symbol; see help {it:{help line_options}}.
 
 {phang}
-    {it:area_options} are options affecting the look of the areas included
+    {it:area_options} are options affecting the look of the areas or bars included
     in the legend key's symbol; see help {it:{help area_options}}.
 
 {marker txtopts}{...}

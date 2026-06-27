@@ -28,15 +28,15 @@ Examples
 The following example illustrates how to create a composite symbol.
 
     sysuse auto
-    twoway (sc mpg turn, msize(large) ms(Oh)) ///
-           (sc mpg turn, msize(large) ms(X) pstyle(p1)) ///
-           (lfit mpg turn, pstyle(p2))
+    two (sc mpg turn, msize(large) ms(Oh)) ///
+        (sc mpg turn, msize(large) ms(X) pstyle(p1)) ///
+        (lfit mpg turn, pstyle(p2))
     addlegend, X(45) frame: ///
-           (Oh X) "Mileage (mpg)", msize(large) ///
-        || (line) "Fitted values"
+        (Oh X) "Mileage (mpg)", msize(large) ///
+        (line) "Fitted values"
 
 Option `X(45)` has been used to shift the legend to the right of the
-graph (i.e., to position the left edge of the space allocated for the keys' symbols
+graph (i.e., to position the midpoint of the space allocated for the keys' symbols
 at X = 45). By default, the legend is placed in the top-left corner.
 
 ![example 1](/images/1.png)
@@ -47,8 +47,8 @@ individual components of a composite symbol.
     sysuse auto
     lpoly weight length, degree(1) ci
     addlegend: ///
-           () "data" ///
-        || (area, astyle(ci)) (line) "lpoly smooth and 95% CI"
+        () "data" ///
+        (area, astyle(ci)) (line) "lpoly smooth and 95% CI"
 
 Note that specifying a key's symbol as `()` selects the plot's default
 marker symbol.
@@ -61,8 +61,8 @@ You can also include arbitrary text in a key's symbol:
     generate str ball = cond(foreign, "`=uchar(9917)'", "`=uchar(9918)'")
     scatter price weight, msymbol(i) mlabposition(0) mlabel(ball)
     addlegend: ///
-           ("`=uchar(9918)'") "domestic" ///
-        || ("`=uchar(9917)'") "foreign"
+        ("`=uchar(9918)'") "domestic" ///
+        ("`=uchar(9917)'") "foreign"
 
 ![example 7](/images/7.png)
 
@@ -71,11 +71,11 @@ The following example illustrates how the legend keys can be placed in different
 locations on the plot.
 
     sysuse auto
-    twoway (histogram weight if foreign==0, psty(p1bar) color(%50)) ///
-           (histogram weight if foreign==1, psty(p2bar) color(%50))
+    two (histogram weight if foreign==0, psty(p1bar) color(%50)) ///
+        (histogram weight if foreign==1, psty(p2bar) color(%50))
     addlegend, lskip(0) color(%50): ///
-           (bar) "Domestic", X(4840) W(-300) ///
-        || (bar) "Foreign",  X(1760) W(300)
+        (bar) "Domestic", X(4690) W(-300) ///
+        (bar) "Foreign",  X(1910) W(300)
 
 Note how setting the symbol width to a negative value changes the default
 placement of the key's text.
@@ -89,10 +89,10 @@ or aligned with the keys' texts can be added.
     sysuse uslifeexp
     twoway (connect le_f le_m year)
     addlegend: ///
-           "Heading aligned with symbol" ///
-        || (line) () "female" ///
-        || - "Heading aligned with text" ///
-        || (line) () "male"
+        "Heading aligned with symbol" ///
+        (line) () "female" ///
+        - "Heading aligned with text" ///
+        (line) () "male"
 
 ![example 4](/images/4.png)
 
@@ -102,12 +102,12 @@ option to make sure that there is enough space for the legend in the graph's
 margin.
 
     sysuse auto
-    twoway (sc mpg turn, msize(large) ms(Oh)) ///
-           (sc mpg turn, msize(large) ms(X) pstyle(p1)) ///
-           (lfit mpg turn, pstyle(p2))
+    two (sc mpg turn, msize(large) ms(Oh)) ///
+        (sc mpg turn, msize(large) ms(X) pstyle(p1)) ///
+        (lfit mpg turn, pstyle(p2))
     addlegend, x(105) margin(r=40): ///
-           (Oh X) "Mileage (mpg)", msize(large) ///
-        || (line) "Fitted values"
+        (Oh X) "Mileage (mpg)", msize(large) ///
+        (line) "Fitted values"
 
 ![example 5](/images/5.png)
 
@@ -121,14 +121,31 @@ subgraphs).
     scatter mpg trunk price, legend(off) name(price, replace) nodraw
     graph combine weight price
     addlegend 2, x(60) tw(35) frame: ///
-           () "Mileage per gallon" ///
-        || () "Trunk space"
+        () "Mileage per gallon" ///
+        () "Trunk space"
 
 ![example 6](/images/6.png)
 
 ---
 
 Main changes:
+
+    27jun2026 (version 2.0.3)
+    - key delimiter || is now optional
+    - can now type . to create a heading aligned with symbol
+    - vertical variants of line, spike, rline, cap, and capsym added
+    - option lstyle(p#other) is now applied to spike, cap, and capsym by default
+    - y()/Y() and x()/X() specified at the level of a key's symbol are now
+      interpreted as offsets from the key's overall position
+    - x()/X() now sets the position of the midpoint of a key's symbol instead of the
+      position of the left edge; default is now x(5) instead of x(2); default for
+      tx() is now 0.75 times the symbol width
+    - due to a typo, the default value for y() was set to 96 instead of 95; this is
+      fixed
+    - calculation of the size and position of the legend's frame no longer takes
+      account of positioning and size options specified at the level of symbols 
+    - format %10.0g is now used for the coordinates in the scatteri commands instead
+      of full precision
 
     20jun2026 (version 2.0.2)
     - a key's symbol can now include text

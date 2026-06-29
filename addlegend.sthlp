@@ -162,8 +162,8 @@
     level of a legend key, or at the level of a key's symbol. Upper-level
     settings are used as defaults for lower-level settings, and options
     specified a lower level take precedence over options specified at an upper
-    level (ignoring case; for example, {cmd:y()} specified at a lower level
-    takes precedence over {cmd:Y()} specified at an upper level). Furthermore,
+    level (ignoring case; for example, {cmd:y()} specified at the level of a legend key
+    takes precedence over {cmd:Y()} specified at the global level). Furthermore,
     if specified at the level of a legend key, options
     {helpb addlegend##symopts:y()},
     {helpb addlegend##symopts:x()},
@@ -184,7 +184,7 @@
 
 {pstd}
     Command {cmd:_mklegend} is the engine behind {cmd:addlegend}. It analyses
-    the selected graph, creates the code of the custom legend (a set of
+    the selected graph, creates the code for the custom legend (a set of
     {helpb twoway scatteri} commands), and stores it in macro
     {cmd:r(legend)}. {cmd:addlegend} then applies {helpb addplot} to add the
     contents of {cmd:r(legend)} to the definition of the selected graph.
@@ -401,7 +401,7 @@
 
 {pstd}
     Furthermore, note that key delimite {cmd:||} is optional. That is, the above
-    command could also be types as follows:
+    command could also be typed as follows:
 
 {p 8 12 2}
     . {stata `"addlegend, X(45) frame: (Oh X, msize(large)) "Mileage (mpg)" (line) "Fitted values""'}

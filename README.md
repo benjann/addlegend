@@ -31,13 +31,12 @@ The following example illustrates how to create a composite symbol.
     two (sc mpg turn, msize(large) ms(Oh)) ///
         (sc mpg turn, msize(large) ms(X) pstyle(p1)) ///
         (lfit mpg turn, pstyle(p2))
-    addlegend, X(45) frame: ///
+    addlegend, position(2) frame: ///
         (Oh X) "Mileage (mpg)", msize(large) ///
         (line) "Fitted values"
 
-Option `X(45)` has been used to shift the legend to the right of the
-graph (i.e., to position the midpoint of the space allocated for the keys' symbols
-at X = 45). By default, the legend is placed in the top-left corner.
+Option `position(2)` has been used to place the legend in the top-right corner of
+the plot region.
 
 ![example 1](/images/1.png)
 
@@ -105,7 +104,7 @@ margin.
     two (sc mpg turn, msize(large) ms(Oh)) ///
         (sc mpg turn, msize(large) ms(X) pstyle(p1)) ///
         (lfit mpg turn, pstyle(p2))
-    addlegend, x(105) margin(r=40): ///
+    addlegend, position(2, outside) margin(r=40): ///
         (Oh X) "Mileage (mpg)", msize(large) ///
         (line) "Fitted values"
 
@@ -120,7 +119,7 @@ subgraphs).
     scatter mpg trunk weight, legend(off) name(weight, replace) nodraw
     scatter mpg trunk price, legend(off) name(price, replace) nodraw
     graph combine weight price
-    addlegend 2, x(60) tw(35) frame: ///
+    addlegend 2, position(2) tw(35) frame: ///
         () "Mileage per gallon" ///
         () "Trunk space"
 
@@ -129,6 +128,19 @@ subgraphs).
 ---
 
 Main changes:
+
+    06aug2026 (version 2.0.4)
+    - option position() can now be used to move the legend to a clock position
+    - options dy()/DY() and dx()/DX() can now be used to apply overall offsets to
+      the legend's position
+    - most lowercase position and size options now support syntax *# to multiply
+      the automatically assigned value by #
+    - custom symbols can now be defined by providing a list of coordinates
+    - option pline can now be specified to apply pstyle(p#line) instead of
+      pstyle(p#) to line symbols instad of
+    - addlegend crashed if a comma was specified at the end of a key
+      without specifying any options; this is fixed
+    - addlegend crashed if -set dp comma- was on; this is fixed
 
     27jun2026 (version 2.0.3)
     - key delimiter || is now optional

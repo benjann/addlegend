@@ -1,4 +1,4 @@
-*! version 2.0.4  06aug2026  Ben Jann
+*! version 2.0.5  09aug2026  Ben Jann
 
 program addlegend, rclass
     version 14

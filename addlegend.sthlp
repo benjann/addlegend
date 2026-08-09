@@ -1,5 +1,5 @@
 {smcl}
-{* 06aug2026}{...}
+{* 09aug2026}{...}
 {vieweralsosee "[G-2] graph twoway" "help graph twoway"}{...}
 {vieweralsosee "[SSC] addplot" "help addplot"}{...}
 {viewerjumpto "Syntax" "addlegend##syntax"}{...}
@@ -37,10 +37,22 @@
     where {it:keylist} is
 
 {p 8 15 2}
-    {it:key} [[{cmd:||}] {it:key} [...]]
+        {it:key} [[{it:del}] {it:key} [{it:...}]]
+
+{marker del}{...}
+{pstd}
+    and {it:del} is
+
+{p2colset 9 13 13 2}{...}
+{p2col : {cmd:&}}start new legend column
+    {p_end}
+{p2col : {cmd:\}}start new legend row
+    {p_end}
+{p2col : {cmd:||}}start new key within column (optional; same as omitting {it:del})
+    {p_end}
 
 {pstd}
-    and {it:key} is
+    and the syntax of {it:key} is
 
 {p 8 15 2}
     {it:symboldef}
@@ -49,8 +61,16 @@
     {it:{help addlegend##topts:txtopts}} ]
 
 {pstd}
-    and {it:symboldef} is {cmd:.} (or empty) for a heading (aligned with
-    symbol), {cmd:-} for a subheading (aligned with text), or
+    where {it:symboldef} is
+
+{p2colset 9 13 13 2}{...}
+{p2col : {cmd:.}}create heading aligned with symbols
+    {p_end}
+{p2col : {cmd:-}}create heading aligned with text labels
+    {p_end}
+
+{pstd}
+    or
 
 {p 8 15 2}
     {cmd:(}{it:symlist} [{cmd:,} {it:{help addlegend##sopts:symopts}}]{cmd:)}
@@ -92,16 +112,18 @@
 {marker opts}{synopthdr:options}
 {synoptline}
 {syntab :{it:{help addlegend##options:Main}}}
-{synopt :{opt lskip(#)}}baseline skip between legend keys
+{synopt :{opt lskip(#)}}adjust baseline skip between legend keys
+    {p_end}
+{synopt :{opt col:skip(#)}}adjust horizontal skip between legend columns
     {p_end}
 {synopt :{cmdab:fr:ame}[{cmd:(}{it:{help addlegend##frame:subopts}}{cmd:)}]}draw
     frame around legend
     {p_end}
 {synopt :{cmdab:pos:ition(}{help addlegend##posopt:{it:spec}}{cmd:)}}move legend to specified clock position
     {p_end}
-{synopt :{opt dy(#)} or {opt DY(#)}}overall vertical offset, in percent or units of Y-axis
+{synopt :{opt dy(#)} or {opt DY(#)}}add overall vertical offset, in percent or units of Y-axis
     {p_end}
-{synopt :{opt dx(#)} or {opt DX(#)}}overall horizontal offset, in percent or units of X-axis
+{synopt :{opt dx(#)} or {opt DX(#)}}add overall horizontal offset, in percent or units of X-axis
     {p_end}
 {synopt :{opth m:argin(marginstyle)}}reset margin of graph region
     {p_end}
@@ -131,13 +153,13 @@
 
 {marker topts}{...}
 {syntab :{it:{help addlegend##txtopts:txtopts}}}
-{synopt :{opt ty(#)} or {opt TY(#)}}vertical offset of text, in percent or units of Y-axis
+{synopt :{opt ty(#)} or {opt TY(#)}}vertical offset of text label, in percent or units of Y-axis
     {p_end}
-{synopt :{opt tx(#)} or {opt TX(#)}}horizontal offset of text, in percent or units of X-axis
+{synopt :{opt tx(#)} or {opt TX(#)}}horizontal offset of text label, in percent or units of X-axis
     {p_end}
-{synopt :{opt tw(#)} or {opt TW(#)}}width of text, in percent or units; only relevant for {cmd:frame()}
+{synopt :{opt tw(#)} or {opt TW(#)}}width of text label, in percent or units of X-axis
     {p_end}
-{synopt :{opth t:ext(textbox_options)}}options affecting look of text
+{synopt :{opth t:ext(textbox_options)}}options affecting look of text label
     {p_end}
 {synoptline}
 
@@ -186,16 +208,24 @@
     {opt lskip(#)} sets the baseline skip between legend keys as a factor of
     the symbol height; the default is {cmd:lskip(1.5)}. Option {cmd:lskip()} has no
     effect on legend keys that are positioned explicitly by the
-    {helpb addlegend##symopts:y()} option.
+    {helpb addlegend##y:y()} option.
+
+{marker colskip}{...}
+{phang}
+    {opt colskip(#)} sets the horizontal skip between legend columns as a
+    factor of the column width (the width of the space allocated for the legend
+    keys); the default is {cmd:colskip(1)}. Option {cmd:colskip()} has no
+    effect on legend keys that are positioned explicitly by the
+    {helpb addlegend##x:x()} option.
 
 {marker frame}{...}
 {phang}
-    {cmd:frame}[{cmd:(}{it:subopts}{cmd:)}] draws a frame around the legend. The
-    size and position of the frame will be determined automatically, but you will
-    most likely have to adjust its width using suboption {cmd:w()} (or by setting
-    the text width using option {helpb addlegend##txtopts:tw()}). Furthermore, you
-    may want to adjust the padding (inner margin of the frame) using suboptions {cmd:ym()} and
-    {cmd:xm()}. {it:subopts} are as follows.
+    {cmd:frame}[{cmd:(}{it:subopts}{cmd:)}] draws a frame around the legend.
+    The size and position of the frame will be determined automatically, but
+    you may need to adjust its width using suboption {cmd:w()} or by setting
+    the text width using option {helpb addlegend##tw:tw()}. Furthermore,
+    you may want to adjust the padding (inner margin of the frame) using
+    suboptions {cmd:ym()} and {cmd:xm()}. {it:subopts} are as follows.
 
 {phang2}
     {opt ym(#)} and {opt YM(#)} set the vertical padding (margin at top
@@ -205,19 +235,19 @@
     multiplied by {it:#}. {cmd:YM()} takes precedence over {cmd:ym()}.
 
 {phang2}
-    {opt xm(#)} and {opt XM(#)} set the default horizontal padding (margin at left
-    and right between legend keys and frame) that is applied unless the frame
-    is positioned manually using {cmd:x()} and {cmd:w()}. The default is
+    {opt xm(#)} and {opt XM(#)} set the default horizontal padding (margin at
+    left and right between legend keys and frame) that is applied unless the
+    frame is positioned manually using {cmd:x()} and {cmd:w()}. The default is
     {cmd:xm(2)}. You can also specify {opt xm(*#)} to use the default value
     multiplied by {it:#}. {cmd:XM()} takes precedence over {cmd:xm()}.
 
 {phang2}
-    {opt y(#)} and {opt Y(#)} set the position of the top edge of the frame, in percent
-    of the range of the Y-axis or in units of the Y-axis, respectively. You can
-    also specify {opt y(*#)} to use the value determined automatically
-    multiplied by {it:#}. {cmd:Y()} takes precedence over {cmd:y()}. Together,
-    {cmd:y()} and {cmd:x()} determine the position of the upper-left corner of
-    the frame.
+    {opt y(#)} and {opt Y(#)} set the position of the top edge of the frame, in
+    percent of the range of the Y-axis or in units of the Y-axis,
+    respectively. You can also specify {opt y(*#)} to use the value determined
+    automatically multiplied by {it:#}. {cmd:Y()} takes precedence over
+    {cmd:y()}. Together, {cmd:y()} and {cmd:x()} determine the position of the
+    upper-left corner of the frame.
 
 {phang2}
     {opt x(#)} and {opt X(#)} set the position of the left edge of the frame,
@@ -243,23 +273,25 @@
     of the frame; see help {it:{help area_options}}. By default, options
     {cmd:lstyle(foreground)} and {cmd:fcolor(white)} will be applied. For
     example, type {cmd:fcolor(none)} for a frame without fill, or type
-    {cmd:lcolor(%0)} for a frame without outline.
+    {cmd:lcolor(%0)} for a filled frame without outline.
 
 {marker posopt}{...}
 {phang}
-    {cmd:position(}{it:{help clockposstyle}}[{cmd:,} {opt out:side}]{cmd:)} moves
-    the legend to the specified clock position in the plot region. Specify
-    suboption {cmd:outside} to move the legend to a clock position in the graph's
-    margin rather than the plot region; you may want to apply option
-    {helpb addlegend##margin:margin()} in this case. Use options {cmd:dy()} and
-    {cmd:dx()} to fine-tune the legend's placement when applying {cmd:position()}.
+    {cmd:position(}{it:{help clockposstyle}}[{cmd:,} {opt out:side}]{cmd:)}
+    moves the legend to the specified clock position in the plot region, or if
+    suboption {cmd:outside} is specified, in the graph's margin (use option
+    option {helpb addlegend##margin:margin()} to adjust the graph's margin if
+    needed). Use options {cmd:dy()} and {cmd:dx()} to fine-tune the legend's
+    placement when applying {cmd:position()}.
 
+{marker dy}{...}
 {phang}
     {opt dy(#)} and {opt DY(#)} apply a vertical offset to
     the position of the legend, in percent of the range of the Y-axis or in
     units of the Y-axis, respectively. The default is {cmd:dy(0)}. {cmd:DY()}
     takes precedence over {cmd:dy()}.
 
+{marker dx}{...}
 {phang}
     {opt dx(#)} and {opt DX(#)} apply a horizontal offset to
     the position of the legend, in percent of the range of the X-axis or in
@@ -270,7 +302,7 @@
 {phang}
     {opt margin(marginstyle)} resets the margin of the graph region; see help
     {it:{help marginstyle}}. This is useful if you want to place the legend in
-    the margin of the graph instead of in the plot region. {cmd:margin()} has
+    the graph's margin instead of the plot region. {cmd:margin()} has
     no effect if specified with {cmd:_mklegend}.
 
 {marker pline}{...}
@@ -288,6 +320,7 @@
 {marker symopts}{...}
 {dlgtab:symopts}
 
+{marker y}{...}
 {phang}
     {opt y(#)} and {opt Y(#)} set the vertical position of the (first) legend
     key (i.e., the midpoint of the vertical space allocated for the key's
@@ -298,20 +331,22 @@
 
 {pmore}
     Specifying {cmd:y()} or {cmd:Y()} only sets the position of the current
-    (first) key. The positions of subsequent keys are determined as
-    {it:y} - {it:lskip} * {it:h}, where
-    {it:y} and {it:h} are the position and symbol height of the previous key
-    and {it:lskip} is the baselineskip as set by option
-    {helpb addlegend##lskip:lskip()}.
+    (first) key. The positions of subsequent keys in the same legend column are
+    determined as {it:y} - {it:lskip} * {it:h}, where {it:y} and {it:h} are the
+    position and symbol height of the previous key and {it:lskip} is the
+    baselineskip as set by option {helpb addlegend##lskip:lskip()}. Column
+    delimiter {helpb addlegend##del:&} resets the value to the position of the
+    first key in current legend row.
 
 {pmore}
-    Furthermore, if specified at the level of a key's symbol, {cmd:y()} and
-    {cmd:Y()} are interpreted as the vertical offset of the symbol from the
-    key's overall position, in percent of the range of the Y-axis or in
-    units of the Y-axis, respectively. The default vertical offset is
-    {cmd:0}. You can also specify {opt y(*#)} to set the offset to the
-    symbol height (as set at the level of the key) multiplied by {it:#}.
+    If specified at the level of a key's symbol, {cmd:y()} and {cmd:Y()} have
+    an alternative meaning: they are interpreted as the vertical offset of the
+    symbol from the key's overall position, in percent of the range of the
+    Y-axis or in units of the Y-axis, respectively. The default vertical offset
+    is {cmd:0}. You can also specify {opt y(*#)} to set the offset to {it:#}
+    times the symbol height (as set at the level of the key).
 
+{marker x}{...}
 {phang}
     {opt x(#)} and {opt X(#)} set the horizontal position of the legend key
     (i.e., the midpoint of the horizontal space allocated for the key's
@@ -321,13 +356,23 @@
     takes precedence over {cmd:y()}.
 
 {pmore}
-    If specified at the level of a key's symbol, {cmd:x()} and {cmd:X()} are
-    interpreted as the horizontal offset of the symbol from the key's overall
-    position, in percent of the range of the X-axis or in units of the X-axis,
-    respectively. The default horizontal offset is {cmd:0}. You can also
-    specify {opt x(*#)} to set the offset to the symbol width (as set at the
-    level of the key) multiplied by {it:#}.
+    Column delimiter {helpb addlegend##del:&} resets the default value to
+    {it:x} + {it:colskip} * {it:width}, where {it:x} is the position of the
+    previous key, {it:colskip} is as set by option
+    {helpb addlegend##colskip:colskip()}, and {it:width} is the total width
+    allocated for the previous key, including symbol and text label, plus half
+    the symbol width. Row delimiter {helpb addlegend##del:\} resets the default
+    value to the horizontal position of the very first key.
 
+{pmore}
+    If specified at the level of a key's symbol, {cmd:x()} and {cmd:X()} have
+    an alternative meaning: they are interpreted as the horizontal offset of
+    the symbol from the key's overall position, in percent of the range of the
+    X-axis or in units of the X-axis, respectively. The default horizontal
+    offset is {cmd:0}. You can also specify {opt x(*#)} to set the offset to
+    {it:#} times the symbol width (as set at the level of the key).
+
+{marker h}{...}
 {phang}
     {opt h(#)} and {opt H(#)} set the height to be allocated for the legend
     key's symbol, in percent of the range of the Y-axis or in units of the
@@ -335,6 +380,7 @@
     {opt h(*#)} to use the value determined automatically multiplied by
     {it:#}. {cmd:H()} takes precedence over {cmd:h()}.
 
+{marker w}{...}
 {phang}
     {opt w(#)} and {opt W(#)} set the width to be allocated for the legend
     key's symbol, in percent of the range of the X-axis or in units of the
@@ -374,36 +420,44 @@
 {marker txtopts}{...}
 {dlgtab:txtopts}
 
+{marker ty}{...}
 {phang}
-    {opt ty(#)} and {opt TY(#)} set the vertical offset of the text from the
-    key's position as set by {cmd:y()} or {cmd:Y()}, in percent of the range of the Y-axis
-    or in units of the Y-axis, respectively. The default is {cmd:ty(0)}. You
-    can also specify {opt ty(*#)} to use the value determined automatically
-    multiplied by {it:#}. {cmd:TY()} takes precedence over {cmd:ty()}.
+    {opt ty(#)} and {opt TY(#)} set the vertical offset of the text label from
+    the key's position as set by {cmd:y()} or {cmd:Y()}, in percent of the
+    range of the Y-axis or in units of the Y-axis, respectively. The default is
+    {cmd:ty(0)}. You can also specify {opt ty(*#)} to use the value determined
+    automatically multiplied by {it:#}. {cmd:TY()} takes precedence over
+    {cmd:ty()}.
 
+{marker tx}{...}
 {phang}
-    {opt tx(#)} and {opt TX(#)} set the horizontal offset of the text from the
-    key's position as set by {cmd:x()} or {cmd:X()}, in percent of the range of
-    the X-axis or in units of the X-axis, respectively. The default is to set
-    the offset to 0.75 times the width of the space allocated for the key's
-    symbol. You can also specify {opt tx(*#)} to use the value determined
+    {opt tx(#)} and {opt TX(#)} set the horizontal offset of the text label
+    from the key's position as set by {cmd:x()} or {cmd:X()}, in percent of the
+    range of the X-axis or in units of the X-axis, respectively. The default is
+    to set the offset to 0.75 times the width of the space allocated for the
+    key's symbol. You can also specify {opt tx(*#)} to use the value determined
     automatically multiplied by {it:#}. {cmd:TX()} takes precedence over
     {cmd:tx()}.
 
+{marker tw}{...}
 {phang}
-    {opt tw(#)} and {opt TW(#)} set the with of the text, in percent of the
-    range of the Y-axis or in units of the Y-axis, respectively. The default is
-    {cmd:tw(20)}. You can also specify {opt tw(*#)} to use the value determined
-    automatically multiplied by {it:#}.
+    {opt tw(#)} and {opt TW(#)} set the width of the space allocated for the
+    text label, in percent of the range of the Y-axis or in units of the
+    Y-axis, respectively. The default is {cmd:tw(20)}. You can also specify
+    {opt tw(*#)} to use the value determined automatically multiplied by
+    {it:#}. {cmd:TW()} takes precedence over {cmd:tw()}.
 
 {pmore}
-    This setting affects how {helpb addlegend##frame:frame()} and {helpb addlegend##posopt:position()}
-    determine the width of the legend; it is irrelevant if {helpb addlegend##frame:frame()}
-    and {helpb addlegend##posopt:position()} are omitted. {cmd:TW()} takes precedence over {cmd:tw()}.
+    Option {cmd:tw()} has no effect on how the text is displayed, but it is
+    relevant for determining the width of the space allocated for the legend
+    key, which affects the behavior of
+    {helpb addlegend##frame:frame()},
+    {helpb addlegend##posopt:position()}, and
+    {helpb addlegend##colskip:colskip()}.
 
 {phang}
-    {opt text(textbox_options)} specifies options affecting look of the text,
-    such as its size, color, or justification; see help
+    {opt text(textbox_options)} specifies options affecting the look of the
+    text label, such as its size, color, or justification; see help
     {it:{help textbox_options}}. If omitted, options {cmd:placement()} and
     {cmd:justification()} are set automatically depending on the sign of
     {cmd:tx()}.
@@ -421,54 +475,45 @@
 {pstd}
     {cmd:addlegend} determines the position and size of the legend based on the
     dimensions of the axes of the selected graph (or the first selected
-    subgraph). Use options
-    {helpb addlegend##symopts:y()},
-    {helpb addlegend##symopts:x()},
-    {helpb addlegend##symopts:h()},
-    {helpb addlegend##symopts:w()},
-    {helpb addlegend##txtopts:ty()},
-    {helpb addlegend##txtopts:tx()}, and
-    {helpb addlegend##txtopts:tw()}
-    (as well as similar suboptions within {helpb addlegend##frame:frame()})
-    to override the default behavior. These options come in two flavors,
-    lower case and upper case. Use the lowercase variant, e.g. {cmd:y()},
-    to specify a setting in percent of the range of the relevant axis; use the
-    uppercase variant, e.g. {cmd:Y()}, to specify a setting in original units
-    of the axis. If both are specified, the uppercase variant takes precedence
-    over the lowercase variant.
+    subgraph). Use option {helpb addlegend##posopt:position()} to move the
+    legend to a specified clock position on the graph, and possibly fine-tune
+    the position using options {helpb addlegend##dy:dy()} and
+    {helpb addlegend##dx:dx()}. In many cases, you will also need to specify
+    option {helpb addlegend##tw:tw()} at the global level to set the width of
+    the space allocated for text labels (since {cmd:addlegend} uses a fixed
+    default that does not respond to the content of the labels). Depending on
+    the plot's aspect ratio, you may also want to specify options
+    {helpb addlegend##h:h()} and {helpb addlegend##w:w()} at the global level
+    to set the height and width of the space allocated for the keys' symbols
+    (which also affects the baseline skip between keys). Furthermore, use the
+    column ({helpb addlegend##del:&}) and row ({helpb addlegend##del:\})
+    delimiters to arrange the keys within the legend (unless you are happy with
+    a single-column legend).
 
 {pstd}
-    Options can be specified at different levels, at the global level, at the
-    level of a legend key, or at the level of a key's symbol. Upper-level
-    settings are used as defaults for lower-level settings, and options
-    specified a lower level take precedence over options specified at an upper
-    level (ignoring case; for example, {cmd:y()} specified at the level of a legend key
-    takes precedence over {cmd:Y()} specified at the global level).
+    For more advanced applications, you can specify options
+    {helpb addlegend##y:y()},
+    {helpb addlegend##x:x()},
+    {helpb addlegend##h:h()},
+    {helpb addlegend##w:w()},
+    {helpb addlegend##ty:ty()},
+    {helpb addlegend##tx:tx()}, and
+    {helpb addlegend##tw:tw()} at the level of individual keys. This
+    overrides the settings for these keys and also affects the default behavior
+    for subsequent keys. Additionally, options
+    {helpb addlegend##y:y()},
+    {helpb addlegend##x:x()},
+    {helpb addlegend##h:h()}, and
+    {helpb addlegend##w:w()} can be specified at the symbol level to override
+    the settings for individual symbols (without affecting subsequent symbols).
 
 {pstd}
-    Furthermore, if specified at the level of a legend key, options
-    {helpb addlegend##symopts:y()},
-    {helpb addlegend##symopts:x()},
-    {helpb addlegend##symopts:h()},
-    {helpb addlegend##symopts:w()},
-    {helpb addlegend##txtopts:ty()},
-    {helpb addlegend##txtopts:tx()}, and
-    {helpb addlegend##txtopts:tw()} (as well as their uppercase variants)
-    are sticky in the sense that they change the default settings for
-    subsequent keys. This is not true for options specified at the
-    level of a key's symbol, which are non-sticky and only affect the current
-    symbol. Also note that options {helpb addlegend##symopts:y()} and
-    {helpb addlegend##symopts:x()} (as well as their uppercase variants)
-    are interpreted as offsets rather than absolute positions if specified at
-    level of a key's symbol.
-
-{pstd}
-    Finally, if both {helpb addlegend##symopts:y()} and
-    {helpb addlegend##symopts:Y()} are omitted at the level of a legend key,
-    the vertical position the key is determined as {it:y} - {it:lskip} *
-    {it:h}, where {it:y} and {it:h} are the position and symbol height of the
-    previous key and {it:lskip} is the baselineskip as set by option
-    {helpb addlegend##lskip:lskip()}.
+    Note that most of the above options come in two flavors, lower case and
+    upper case. Use the lowercase variant, e.g. {cmd:dy()}, to specify a setting
+    in percent of the range of the relevant axis; use the uppercase variant,
+    e.g. {cmd:DY()}, to specify a setting in original units of the axis. If both
+    are specified, the uppercase variant takes precedence over the lowercase
+    variant.
 
 {marker customsymbol}{...}
 {dlgtab:Defining a custom symbol}
@@ -493,7 +538,7 @@
 
 {pstd}
     By default, the symbol is drawn as an outline. Apply option {cmd:recast(area)}
-    to draw the symbol as a filled area. That is, specifying a legend key as
+    to draw the symbol as an area. That is, specifying a legend key as
 
         {cmd:((}{it:y}1 {it:x}1 ...{cmd:))} {cmd:"}{it:text}{cmd:"}
 
@@ -503,7 +548,7 @@
         {cmd:((}{it:y}1 {it:x}1 ...{cmd:), recast(area))} {cmd:"}{it:text}{cmd:"}
 
 {pstd}
-    will draw the symbol as filled area.
+    will draw the symbol as area.
 
 
 {marker examples}{...}
@@ -523,12 +568,9 @@
     {p_end}
 
 {pstd}
-    Option {cmd:position(2)} has been specified to place the legend in the top-right corner
-    of the plot region.
-
-{pstd}
-    Note that key delimiter {cmd:||} is optional. That is, the above
-    command could also be typed as follows:
+    Option {cmd:position(2)} has been specified to place the legend in the
+    top-right corner of the plot region. Note that key delimiter {cmd:||} is
+    optional; the above command could also be typed as follows:
 
 {p 8 12 2}
     . {stata `"addlegend, position(2) frame: (Oh X, msize(large)) "Mileage (mpg)" (line) "Fitted values""'}
@@ -537,31 +579,31 @@
 {dlgtab:Custom positioning of legend keys}
 
 {pstd}
-    The following example illustrates how the legend keys can be placed in different
-    locations on the plot.
+    The following example illustrates how the individual legend keys can be
+    placed in custom locations on the plot.
 
         . {stata sysuse auto}
 {p 8 12 2}
     . {stata twoway (hist weight if foreign==0, psty(p1bar) color(%50)) (hist weight if foreign==1, psty(p2bar) color(%50))}
     {p_end}
 {p 8 12 2}
-    . {stata `"addlegend, lskip(0) color(%50): (bar) "Domestic", X(4690) W(-300) || (bar) "Foreign", X(1910) W(300)"'}
+    . {stata `"addlegend, color(%50): (bar) "Domestic", y(95) X(4690) W(-300) || (bar) "Foreign", y(95) X(1910) W(300)"'}
     {p_end}
 
 {pstd}
     Note how setting the symbol width to a negative value changes the default
-    placement of the key's text.
+    placement of the key's text label.
 
 {dlgtab:Headings}
 
 {pstd}
-    To create a heading that is aligned with the keys' symbols, type
+    To create a heading that is aligned with the key symbols, type
 
         {cmd:.} {cmd:"}{it:text}{cmd:"} [{cmd:"}{it:text}{cmd:"} [...]]
 
 {pstd}
     Alternatively, to create a heading that is aligned with the
-    keys' texts, type
+    text labels, type
 
         {cmd:-} {cmd:"}{it:text}{cmd:"} [{cmd:"}{it:text}{cmd:"} [...]]
 
@@ -594,9 +636,9 @@
 {dlgtab:Add legend to subgraph}
 
 {pstd}
-    In case of a graph that contains multiple subgraphs, specify {cmd:addlegend} {it:#}
-    to add the legend to subgraph {it:#} (by default, the legend is added to all
-    subgraphs).
+    In case of a graph that contains multiple subgraphs, specify
+    {cmd:addlegend} {it:#} to add the legend to subgraph {it:#} (by default,
+    the legend is added to all subgraphs).
 
         . {stata sysuse auto}
 {p 8 12 2}
@@ -609,7 +651,7 @@
     . {stata graph combine weight price}
     {p_end}
 {p 8 12 2}
-    . {stata `"addlegend 2, position(2) tw(35) frame: () "Mileage per gallon" || () "Trunk space""'}
+    . {stata `"addlegend 2, position(2) h(4) tw(35) frame: () "Mileage per gallon" || () "Trunk space""'}
     {p_end}
 
 {pstd}
@@ -625,9 +667,9 @@
     the legend's code in macro {cmd:r(legend)}.
 
 {pstd}
-    For example, {cmd:addlegend} removes the legend created by Stata's
-    {cmd:legend()} option. Here is how you could create a graph that includes
-    both types of legends.
+    For example, here is how you could create a graph that includes both, a
+    legend created by Stata's {cmd:legend()} option and a legend created by
+    {cmd:_mklegend}:
 
         . {stata sysuse auto}
 {p 8 12 2}

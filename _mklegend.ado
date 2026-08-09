@@ -1,4 +1,4 @@
-*! version 2.0.4  06aug2026  Ben Jann
+*! version 2.0.5  09aug2026  Ben Jann
 
 program _mklegend
     version 14
@@ -72,7 +72,7 @@ program __mklegend, rclass
     local 0 `"`s(before)'"'
     
     // parse s(after)
-    mata: keys_expand() // returns key_n, key_#
+    mata: keys_expand() // returns key_n, key_#, key_#_del
     
     // parse [graphname] [numlist]
     _parse comma subgr 0 : 0
@@ -86,8 +86,8 @@ program __mklegend, rclass
     }
     
     // parse options
-    syntax [, nodraw Margin(passthru) pline /*
-        */ FRame FRame2(str) lskip(real 1.5) dy(real 0) dx(real 0)/*
+    syntax [, nodraw Margin(passthru) pline lskip(real 1.5) COLskip(real 1) /*
+        */ FRame FRame2(str) dy(real 0) dx(real 0)/*
         */ y(str) x(str) h(str) w(str) ty(str) tx(str) tw(str) Text(str)/*
         */ PSTYle(passthru) * ]
     parse_num y `y' // y, _y
@@ -157,14 +157,36 @@ program __mklegend, rclass
     local maxY .
     local minX .
     local maxX .
+    local j 0    // within column counter
+    local jmax 0 // max number of keys within column
     local p 0
     forv i=1/`key_n' {
-        parse_key `minY' `maxY' `minX' `maxX' `p' `Ymin' `Yr' `Xmin' `Xr'/*
-            */ `DY' `DX' `Y' `X' `H' `W' `"`pstyle'"' "`pline'" `"`options'"'/*
+        parse_key `minY' `maxY' `minX' `maxX' `p' `Ymin' `Yr' `Xmin' `Xr' `DY'/*
+            */ `DX' `Y' `X' `H' `W' `"`pstyle'"' "`pline'" `"`options'"'/*
             */ `TY' `TX' `txw' `TW' `"`place'"' `"`just'"' `"`topts'"'/*
-            */ `key_`i'' // returns plots, p, Y, X, H, W, TY, ...
+            */ `key_`i'' // returns plots, p, CW, Y, X, H, W, TY, ...
         local legend `legend' `plots'
+        if `i'==1 {
+            local Y0 `Y'
+            local X0 `X'
+        }
         local Y = `Y' - `lskip' * `H'
+        if `++j'>`jmax' {
+            local jmax `j'
+            local Ynext `Y'
+        }
+        if `key_`i'_del'==1 { // new legend column
+            local j 0
+            local Y = `Y0'
+            local X = `X' + `colskip' * `CW'
+        }
+        else if `key_`i'_del'==2 { // new legend row
+            local j 0
+            local jmax 0
+            local Y0 = `Ynext'
+            local Y = `Y0'
+            local X = `X0'
+        }
     }
     if `minY'>=. local minY `Y'
     if `maxY'>=. local maxY `Y'
@@ -430,6 +452,7 @@ program parse_key
         if `"`just'"'==""  local just  left
         local tdir 1
     }
+    local CW = `W' + `tx' + `tdir'*`TW' // (symbol + text) + 0.5*symbol
     if `hassym' {
         local ty = `Y' + `TY'
         local tx = `X' + `tx'
@@ -454,7 +477,7 @@ program parse_key
     local maxX = max(`tmp')
     
     // returns
-    foreach opt in p Y X H W TY TX txw TW minY maxY minX maxX plots {
+    foreach opt in CW p Y X H W TY TX txw TW minY maxY minX maxX plots {
         c_local `opt' ``opt''
     }
 end
@@ -702,18 +725,26 @@ real scalar _token_has_pars(string scalar s)
 
 void keys_expand()
 {
-    real scalar   i, a, b, par, opts, newkey
-    string scalar s, tok
-    transmorphic  t
+    real scalar      i, a, b, par, opts, newkey
+    string scalar    s, tok
+    transmorphic     t
     
     s = st_global("s(after)")
-    t = tokeninit(" ", (",", "||"), (`""""', `"`""'"', "()"))
+    t = tokeninit(" ", (",", "||", "&", "\"), (`""""', `"`""'"', "()"))
     tokenset(t, s)
     newkey = opts = par = i = 0
     b = 1
+    // first token
+    tok = tokenpeek(t)
+    if (!anyof(("||", "&", "\"), tok)) {
+        tok = tokenget(t)
+        if (_token_has_pars(tok)) par  = 1 // token is "(...)"
+        else if (tok==",")        opts = 1 // start of options
+    }
+    // rest
     while ((tok = tokenget(t))!="") {
         if (_token_has_pars(tok)) {
-            if (opts==par) newkey = 1 /* start new key it token is "(...)" and
+            if (opts==par) newkey = 1 /* start new key if token is "(...)" and
                 one of the following cases applies: (1) the position of the
                 token is not in a section of options and the token is not
                 preceded by "(...)" (2) the position of the token is in a
@@ -728,15 +759,18 @@ void keys_expand()
                 if (opts) newkey = 1       // repeated set of options
                 else      opts = par = 1   // start of options, i.e. ", ..."
             }
-            else if (tok=="||") newkey = 2 // explicit key delimiter
+            else if (tok=="||") newkey = 2 // key delimiter
+            else if (tok=="&")  newkey = 3 // column delimiter
+            else if (tok=="\")  newkey = 4 // row delimiter
         }
         if (newkey) {
             a = b; b = tokenoffset(t)
             opts = 0
-            if (newkey==2) { // (explicit delimiter)
-                _keys_expand(i, s, a, b-a-2) // extract key (w/o delimiter)
+            if (newkey>1) { // (explicit delimiter)
+                _keys_expand(i, s, a, b-a, newkey) // extract key
+                // next token
                 tok = tokenpeek(t)
-                if (tok!="||") { // move to first token after delimiter
+                if (!anyof(("||", "&", "\"), tok)) {
                     tok = tokenget(t)
                     if (_token_has_pars(tok)) par  = 1 // token is "(...)"
                     else if (tok==",")        opts = 1 // start of options
@@ -753,15 +787,18 @@ void keys_expand()
     st_local("key_n", strofreal(i))
 }
 
-void _keys_expand(real scalar i, string scalar s, real scalar a, real scalar l)
+void _keys_expand(real scalar i, string scalar s, real scalar a, real scalar l,
+    | real scalar newkey)
 {
-    string scalar tok
+    string scalar k
     
-    tok = strtrim(substr(s, a, l))
-    if (tok!="") {
-        i++
-        st_local("key_"+strofreal(i), tok)
-    }
+    if      (newkey==2) l = l - 2 // omit || delimiter
+    else if (newkey==3) l = l - 1 // omit & delimiter
+    else if (newkey==4) l = l - 1 // omit \ delimiter
+    i++
+    k = strofreal(i)
+    st_local("key_"+k, strtrim(substr(s, a, l)))
+    st_local("key_"+k+"_del", (newkey==3 ? "1" : (newkey==4 ? "2" : "0")))
 }
 
 end

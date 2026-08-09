@@ -72,9 +72,9 @@ locations on the plot.
     sysuse auto
     two (histogram weight if foreign==0, psty(p1bar) color(%50)) ///
         (histogram weight if foreign==1, psty(p2bar) color(%50))
-    addlegend, lskip(0) color(%50): ///
-        (bar) "Domestic", X(4690) W(-300) ///
-        (bar) "Foreign",  X(1910) W(300)
+    addlegend, color(%50): ///
+        (bar) "Domestic", y(95) X(4690) W(-300) ///
+        (bar) "Foreign",  y(95) X(1910) W(300)
 
 Note how setting the symbol width to a negative value changes the default
 placement of the key's text.
@@ -82,13 +82,13 @@ placement of the key's text.
 ![example 3](/images/3.png)
 
 **Headings.**
-The following example illustrates how headings aligned with the keys' symbols
-or aligned with the keys' texts can be added.
+The following example illustrates how headings aligned with the symbols
+or aligned with the text labels can be added.
 
     sysuse uslifeexp
     twoway (connect le_f le_m year)
     addlegend: ///
-        "Heading aligned with symbol" ///
+        . "Heading aligned with symbol" ///
         (line) () "female" ///
         - "Heading aligned with text" ///
         (line) () "male"
@@ -119,7 +119,7 @@ subgraphs).
     scatter mpg trunk weight, legend(off) name(weight, replace) nodraw
     scatter mpg trunk price, legend(off) name(price, replace) nodraw
     graph combine weight price
-    addlegend 2, position(2) tw(35) frame: ///
+    addlegend 2, position(2) h(4) tw(35) frame: ///
         () "Mileage per gallon" ///
         () "Trunk space"
 
@@ -128,6 +128,11 @@ subgraphs).
 ---
 
 Main changes:
+
+    09aug2026 (version 2.0.5)
+    - column delimiter "&" added
+    - row delimiter "\" added
+    - option colskip() added
 
     06aug2026 (version 2.0.4)
     - option position() can now be used to move the legend to a clock position

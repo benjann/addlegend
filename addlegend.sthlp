@@ -443,9 +443,9 @@
 {marker tw}{...}
 {phang}
     {opt tw(#)} and {opt TW(#)} set the width of the space allocated for the
-    text label, in percent of the range of the Y-axis or in units of the
+    text label, in percent of the range of the X-axis or in units of the
     Y-axis, respectively. The default is to set the width to 20 percent
-    of the range of the Y-axis, either positive or negative, depending on the
+    of the range of the X-axis, either positive or negative, depending on the
     sign of {helpb addlegend##w:w()}. You can also specify
     {opt tw(*#)} to use the value determined automatically multiplied by
     {it:#}. {cmd:TW()} takes precedence over {cmd:tw()}.

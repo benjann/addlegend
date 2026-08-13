@@ -1,5 +1,5 @@
 {smcl}
-{* 09aug2026}{...}
+{* 13aug2026}{...}
 {vieweralsosee "[G-2] graph twoway" "help graph twoway"}{...}
 {vieweralsosee "[SSC] addplot" "help addplot"}{...}
 {viewerjumpto "Syntax" "addlegend##syntax"}{...}
@@ -44,11 +44,11 @@
     and {it:del} is
 
 {p2colset 9 13 13 2}{...}
-{p2col : {cmd:&}}start new legend column
+{p2col : {cmd:&}}column delimiter
     {p_end}
-{p2col : {cmd:\}}start new legend row
+{p2col : {cmd:\}}row delimiter
     {p_end}
-{p2col : {cmd:||}}start new key within column (optional; same as omitting {it:del})
+{p2col : {cmd:||}}key delimiter (within column; same as omitting {it:del})
     {p_end}
 
 {pstd}
@@ -64,9 +64,9 @@
     where {it:symboldef} is
 
 {p2colset 9 13 13 2}{...}
-{p2col : {cmd:.}}create heading aligned with symbols
+{p2col : {cmd:.}}heading aligned with symbols
     {p_end}
-{p2col : {cmd:-}}create heading aligned with text labels
+{p2col : {cmd:-}}heading aligned with text labels
     {p_end}
 
 {pstd}
@@ -223,21 +223,22 @@
     {cmd:frame}[{cmd:(}{it:subopts}{cmd:)}] draws a frame around the legend.
     The size and position of the frame will be determined automatically, but
     you may need to adjust its width using suboption {cmd:w()} or by setting
-    the text width using option {helpb addlegend##tw:tw()}. Furthermore,
-    you may want to adjust the padding (inner margin of the frame) using
-    suboptions {cmd:ym()} and {cmd:xm()}. {it:subopts} are as follows.
+    the width of the space allocated for text labels using option
+    {helpb addlegend##tw:tw()}. Furthermore, you may want to adjust the padding
+    (inner margin of the frame) using suboptions {cmd:ym()} and
+    {cmd:xm()}. {it:subopts} are as follows.
 
 {phang2}
     {opt ym(#)} and {opt YM(#)} set the vertical padding (margin at top
     and bottom between legend keys and frame) that is applied unless the frame
-    is positioned manually using {cmd:y()} and {cmd:h()}. The default is
+    is positioned manually using suboptions {cmd:y()} and {cmd:h()}. The default is
     {cmd:ym(2.5)}. You can also specify {opt ym(*#)} to use the default value
     multiplied by {it:#}. {cmd:YM()} takes precedence over {cmd:ym()}.
 
 {phang2}
     {opt xm(#)} and {opt XM(#)} set the default horizontal padding (margin at
     left and right between legend keys and frame) that is applied unless the
-    frame is positioned manually using {cmd:x()} and {cmd:w()}. The default is
+    frame is positioned manually using suboptions {cmd:x()} and {cmd:w()}. The default is
     {cmd:xm(2)}. You can also specify {opt xm(*#)} to use the default value
     multiplied by {it:#}. {cmd:XM()} takes precedence over {cmd:xm()}.
 
@@ -279,9 +280,9 @@
 {phang}
     {cmd:position(}{it:{help clockposstyle}}[{cmd:,} {opt out:side}]{cmd:)}
     moves the legend to the specified clock position in the plot region, or if
-    suboption {cmd:outside} is specified, in the graph's margin (use option
-    option {helpb addlegend##margin:margin()} to adjust the graph's margin if
-    needed). Use options {cmd:dy()} and {cmd:dx()} to fine-tune the legend's
+    suboption {cmd:outside} is specified, in the graph's margin; use option
+    {helpb addlegend##margin:margin()} to adjust the graph's margin if
+    needed. Use options {cmd:dy()} and {cmd:dx()} to fine-tune the legend's
     placement when applying {cmd:position()}.
 
 {marker dy}{...}
@@ -443,7 +444,9 @@
 {phang}
     {opt tw(#)} and {opt TW(#)} set the width of the space allocated for the
     text label, in percent of the range of the Y-axis or in units of the
-    Y-axis, respectively. The default is {cmd:tw(20)}. You can also specify
+    Y-axis, respectively. The default is to set the width to 20 percent
+    of the range of the Y-axis, either positive or negative, depending on the
+    sign of {helpb addlegend##w:w()}. You can also specify
     {opt tw(*#)} to use the value determined automatically multiplied by
     {it:#}. {cmd:TW()} takes precedence over {cmd:tw()}.
 
@@ -460,7 +463,7 @@
     text label, such as its size, color, or justification; see help
     {it:{help textbox_options}}. If omitted, options {cmd:placement()} and
     {cmd:justification()} are set automatically depending on the sign of
-    {cmd:tx()}.
+    {cmd:tw()}.
 
 
 {marker remarks}{...}

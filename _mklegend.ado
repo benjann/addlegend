@@ -1,4 +1,4 @@
-*! version 2.0.5  09aug2026  Ben Jann
+*! version 2.0.6  13aug2026  Ben Jann
 
 program _mklegend
     version 14
@@ -107,11 +107,12 @@ program __mklegend, rclass
     if "`_ty'"!="" local ty = `ty' * `_ty'
     parse_num tx `tx' // tx, _tx
     if "`tx'"==""  local tx .
-    local txw 0.75
-    if "`_tx'"!="" local txw = `txw' * `_tx'
+    local tx0 0.75
+    if "`_tx'"!="" local tx0 = `tx0' * `_tx'
     parse_num tw `tw' // tw, _tw
-    if  "`tw'"=="" local tw 20
-    if "`_tw'"!="" local tw = `tw' * `_tw'
+    if  "`tw'"=="" local tw .
+    local tw0 20
+    if "`_tw'"!="" local tw0 = `tw0' * `_tw'
     mata: extract_opts(("DY", "DX", "Y", "X", "H", "W", "TY", "TX", "TW"))
     foreach opt in DY DX Y X H W TY TX TW {
         if "``opt''"=="" local `opt' .
@@ -163,7 +164,7 @@ program __mklegend, rclass
     forv i=1/`key_n' {
         parse_key `minY' `maxY' `minX' `maxX' `p' `Ymin' `Yr' `Xmin' `Xr' `DY'/*
             */ `DX' `Y' `X' `H' `W' `"`pstyle'"' "`pline'" `"`options'"'/*
-            */ `TY' `TX' `txw' `TW' `"`place'"' `"`just'"' `"`topts'"'/*
+            */ `TY' `TX' `tx0' `TW' `tw0' `"`place'"' `"`just'"' `"`topts'"'/*
             */ `key_`i'' // returns plots, p, CW, Y, X, H, W, TY, ...
         local legend `legend' `plots'
         if `i'==1 {
@@ -360,7 +361,7 @@ end
 program parse_key
     // options
     foreach arg in minY maxY minX maxX p Ymin Yr Xmin Xr DY DX _Y _X _H _W/*
-        */ _pstyle pline _options _TY _TX txw _TW _place _just _topts {
+        */ _pstyle pline _options _TY _TX tx0 _TW tw0 _place _just _topts {
         gettoken `arg' 0 : 0
     }
     _parse comma txt  0 : 0
@@ -438,28 +439,37 @@ program parse_key
     
     // plot label
     if `TX'>=. {
-        if "`_tx'"!="" local txw = `txw' * `_tx' // update default factor
-        local tx = `W' * `txw'
+        if "`_tx'"!="" local tx0 = `tx0' * `_tx' // update default factor
+        local tx = `W' * `tx0'
     }
     else local tx `TX'
-    if (sign(`tx')*sign(`Xr'))<0 {
+    if `TW'>=. {
+        if "`_tw'"!="" local tw0 = `tw0' * `_tw' // update default text width
+        local tw = `tw0' * `Xr' / 100
+        if (sign(`W')*sign(`Xr'))<0 local tw = `tw' * -1
+    }
+    else local tw `TW'
+    local s0 = `X' - 0.5 * `W'
+    local s1 = `X' + 0.5 * `W'
+    local tx = `X' + `tx'
+    local t1 = `tx' + `tw'
+    local CW = max(`s0',`s1',`tx',`t1') - min(`s0',`s1',`tx',`t1') + abs(`W'/2)
+    if (sign(`tw')*sign(`Xr'))<0 {
         if `"`place'"'=="" local place left
         if `"`just'"'==""  local just  right
-        local tdir -1
+        local CW = `CW' * -1
     }
     else {
         if `"`place'"'=="" local place right
         if `"`just'"'==""  local just  left
-        local tdir 1
     }
-    local CW = `W' + `tx' + `tdir'*`TW' // (symbol + text) + 0.5*symbol
     if `hassym' {
         local ty = `Y' + `TY'
-        local tx = `X' + `tx'
     }
     else {
         local ty = `Y'
-        local tx = `X' - 0.5*`W'
+        local tx = `X' - 0.5 * `W'
+        local t1 = `tx' + `tw'
     }
     setdim y = `ty' + `DY'
     setdim x = `tx' + `DX'
@@ -471,13 +481,13 @@ program parse_key
     local minY = min(`minY', `tmp')
     if `maxY'<. local tmp "`maxY',`tmp'"
     local maxY = max(`tmp')
-    local tmp "`X'-0.5*`W', `X'+0.5*`W', `tx', `tx'+`tdir'*`TW'"
+    local tmp "`s0', `s1', `tx', `t1'"
     local minX = min(`minX', `tmp')
     if `maxX'<. local tmp "`maxX',`tmp'"
     local maxX = max(`tmp')
     
     // returns
-    foreach opt in CW p Y X H W TY TX txw TW minY maxY minX maxX plots {
+    foreach opt in CW p Y X H W TY TX tx0 TW tw0 minY maxY minX maxX plots {
         c_local `opt' ``opt''
     }
 end

@@ -129,6 +129,11 @@ subgraphs).
 
 Main changes:
 
+    13aug2026 (version 2.0.6)
+    - tw(): sign of default value now depends on sign of w()
+    - direction of labels now depends on sign of tw() instead of tx()
+    - improved computation of column width
+
     09aug2026 (version 2.0.5)
     - column delimiter "&" added
     - row delimiter "\" added
